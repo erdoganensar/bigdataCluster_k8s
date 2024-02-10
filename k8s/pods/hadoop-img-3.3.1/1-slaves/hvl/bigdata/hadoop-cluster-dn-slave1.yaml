@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dn-1-slaves-hvl-bigdata-hadoop-331-slave1
+  namespace: hvl
+  labels:
+    component: 1-slaves-hvl-bigdata-hadoop-331-slave1
+spec:
+  selector:
+    component: 1-slaves-hvl-bigdata-hadoop-331-slave1
+  ports:
+  - port: 22
+    name: ssh
+    protocol: TCP

@@ -1,0 +1,41 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: 1-slaves-hvl-bigdata-hadoop-331-slave1
+  namespace: hvl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: 1-slaves-hvl-bigdata-hadoop-331-slave1
+  template:
+    metadata:
+      labels:
+        component: 1-slaves-hvl-bigdata-hadoop-331-slave1
+    spec:
+      #imagePullSecrets:
+      #  - name: docker-registry-key
+      hostname: 1-slaves-hvl-bigdata-hadoop-331-slave1
+      containers:
+        - name: 1-slaves-hvl-bigdata-hadoop-331-slave1
+          image: ensaradaletai/hadoop-img-3.3.1
+          imagePullPolicy: Always
+          command: ["/bin/bash", "-c"]
+          args: ["echo 'Inıt script starting' && /tmp/init-cluster-config.sh e58c5ecbdc 1 1-slaves-hvl-bigdata-hadoop-331 0 && /tmp/start-worker-hadoop.sh e58c5ecbdc 1 1-slaves-hvl-bigdata-hadoop-331 0"]
+          resources:
+            requests:
+              cpu: 1
+              memory: 2048Mi
+          livenessProbe:
+              exec:
+                command:
+                - cat
+                - /tmp/healthy
+              initialDelaySeconds: 30
+              periodSeconds: 10
+          ports:
+            - containerPort: 22
+            - containerPort: 2183
+            - containerPort: 8687
+            - containerPort: 2890
+            - containerPort: 3890

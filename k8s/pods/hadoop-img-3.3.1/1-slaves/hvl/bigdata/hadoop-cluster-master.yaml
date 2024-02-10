@@ -1,0 +1,51 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: 1-slaves-hvl-bigdata-hadoop-331-master
+  namespace: hvl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: 1-slaves-hvl-bigdata-hadoop-331-master
+  template:
+    metadata:
+      labels:
+        component: 1-slaves-hvl-bigdata-hadoop-331-master
+    spec:
+      #imagePullSecrets:
+      #  - name: docker-registry-key
+      hostname: 1-slaves-hvl-bigdata-hadoop-331-master
+      containers:
+        - name: 1-slaves-hvl-bigdata-hadoop-331-master
+          image: ensaradaletai/hadoop-img-3.3.1
+          imagePullPolicy: Always
+          command: ["/bin/bash", "-c"]
+          args: ["echo 'Inıt script starting' && /tmp/init-cluster-config.sh e58c5ecbdc 1 1-slaves-hvl-bigdata-hadoop-331 0 && /tmp/start-master-hadoop.sh 1 1-slaves-hvl-bigdata-hadoop-331 0"]
+          ports:
+            - containerPort: 50070
+            - containerPort: 9688
+            - containerPort: 22
+          resources:
+            requests:
+              cpu: 1
+              memory: 2048Mi
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: hvl-bigdata-1-slaves-331-svc
+  namespace: hvl
+spec:
+  type: NodePort
+  ports:
+    - name: masternodeadmin
+      port: 50070
+      nodePort: 30000
+      protocol: TCP
+    - name: masternoderesourcemanager
+      port: 9688
+      nodePort: 30100
+      protocol: TCP
+  selector:
+     component: 1-slaves-hvl-bigdata-hadoop-331-master
